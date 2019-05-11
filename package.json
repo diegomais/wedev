@@ -3,7 +3,17 @@
   "version": "1.0.0",
   "description": "Social network for developers",
   "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "server": "nodemon server"
+  },
   "repository": "https://github.com/diegomais/wedev.git",
   "author": "Diego Mais",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.0"
+  }
 }
