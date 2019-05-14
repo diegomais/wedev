@@ -10,14 +10,19 @@ const connectDB = require('./config/db');
 // Create app object by calling the top-level express() function exported by Express module.
 const app = express();
 
+/** Mount middleware that parses incoming requests with JSON payloads.
+ * extended: false is a configuration option that tells the parser to use the classic encoding.
+ * When using it, values can be only strings or arrays. */
+app.use(express.json({ extended: false }));
+
 // Connect Database
 connectDB();
 
-/** Respond with 'Hello WeDev' when a GET request is made to the root URL (/) or route.
- * The req (request) and res (response) are the exact same objects that Node provides, so we can
- * invoke req.pipe(), req.on('data', callback), and anything else we would do without Express
- * involved. */
-app.get('/', (req, res) => res.send('Hello WeDev!'));
+// Define Routes
+app.use('/api/user', require('./routes/api/user'));
+app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/profile', require('./routes/api/profile'));
+app.use('/api/posts', require('./routes/api/posts'));
 
 /** Create a constant reference to port declared on environment variables
  * or set the port of remote server to 3001.  */
