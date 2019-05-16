@@ -10,11 +10,14 @@ const { check, validationResult } = require('express-validator/check');
 // Import Gravatar module: library to generate Gravatar URLs in Node.js Based on gravatar specs.
 const gravatar = require('gravatar');
 
+// Load User model.
+const User = require('../../models/User');
+
 // Import bcrypt module: library to hash passwords.
 const bcrypt = require('bcryptjs');
 
-// Load User model.
-const User = require('../../models/User');
+// Import jsonwebtoken module: implementation of JSON Web Tokens.
+const jwt = require('jsonwebtoken');
 
 // @route    POST api/user
 // @desc     Register user
@@ -35,7 +38,7 @@ router.post(
     ).isLength({ min: 6 })
   ],
   async (req, res) => {
-    // Finds the validation errors in this request and wraps them in an object with handy functions
+    // Finds the validation errors in this request and wraps them in an object with handy functions.
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
@@ -45,7 +48,7 @@ router.post(
     const { name, email, password } = req.body;
 
     try {
-      // Asynchronously finds e-mail and check if e-mail is in use
+      // Asynchronously finds e-mail and check if e-mail is in use.
       let user = await User.findOne({ email });
       if (user) {
         return res.status(409).json({
@@ -68,13 +71,22 @@ router.post(
       // Asynchronously save user document to database.
       await user.save();
 
-      // TODO: Return JSON Web Token
+      // Create payload to token with user id.
+      const payload = { user: { id: user.id } };
 
-      // Send message: 'User registered.'
-      res.send('User registered.');
+      // Asynchronously token signing and return token.
+      jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: 360000 },
+        (error, token) => {
+          if (error) throw error;
+          return res.json({ token });
+        }
+      );
     } catch (error) {
       console.error(error.message);
-      res.status(500).send('Server error');
+      return res.status(500).send('Server error');
     }
   }
 );
