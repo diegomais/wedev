@@ -18,7 +18,7 @@ const Profile = require('../../models/Profile');
 // @access   Private
 router.get('/me', auth, async (req, res) => {
   try {
-    // Find profile document and populate it with name and avatar from user collerction
+    // Find profile document and populate it with name and avatar from user collection
     // by passing fields name and avatar syntax as the second argument to the populate method.
     const profile = await Profile.findOne({
       user: req.user.id
@@ -27,7 +27,7 @@ router.get('/me', auth, async (req, res) => {
     // If no profile is returned from database return with a message.
     if (!profile)
       return res
-        .status(400)
+        .status(404)
         .json({ message: 'There is no profile for this user.' });
 
     // Or return the profile from database.
@@ -122,9 +122,51 @@ router.post(
       return res.json(profile);
     } catch (error) {
       console.error(error.message);
-      res.status(500).send('Server error');
+      return res.status(500).send('Server error');
     }
   }
 );
+
+// @route    GET api/profile
+// @desc     Get all profiles
+// @access   Public
+router.get('/', async (req, res) => {
+  try {
+    // Find all profiles documents and populate them with name and avatar from user collection
+    // by passing fields name and avatar syntax as the second argument to the populate method.
+    const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+    return res.json(profiles);
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send('Server error.');
+  }
+});
+
+// @route    GET api/profile/:user_id
+// @desc     Get profile by user ID
+// @access   Public
+router.get('/:user_id', async (req, res) => {
+  try {
+    // Find profile document by user_id and populate it with name and avatar from user collection
+    // by passing fields name and avatar syntax as the second argument to the populate method.
+    const profile = await Profile.findOne({
+      user: req.params.user_id
+    }).populate('user', ['name', 'avatar']);
+
+    if (!profile)
+      return res.status(404).json({ message: 'Profile not found.' });
+
+    res.json(profile);
+  } catch (error) {
+    console.error(error.message);
+    // Handle cast error on find when objectId is invalid.
+    if (error.kind == 'ObjectId') {
+      return res.status(404).json({
+        message: 'Profile not found.'
+      });
+    }
+    return res.status(500).send('Server error.');
+  }
+});
 
 module.exports = router;
