@@ -368,4 +368,34 @@ router.put(
   }
 );
 
+// @route    DELETE api/profile/education/:edu_id
+// @desc     Delete education from profile
+// @access   Private
+router.delete('/education/:edu_id', auth, async (req, res) => {
+  try {
+    // Find profile on database using id from user authenticated.
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    // Get index of the education to remove from education array.
+    const removeIndex = profile.education
+      .map(item => item.id)
+      .indexOf(req.params.edu_id);
+
+    // Remove the index finded above from education array.
+    profile.education.splice(removeIndex, 1);
+
+    // Save the changes on database.
+    await profile.save();
+
+    // Return the updated profile.
+    return res.json(profile);
+  } catch (error) {
+    // Outputs the error message to the Web Console.
+    console.error(error.message);
+    // Return 500 Internal Server Error response code: Indicates that the server encountered an
+    // unexpected condition that prevented it from fulfilling the request. */
+    return res.status(500).send('Internal Server Error.');
+  }
+});
+
 module.exports = router;
