@@ -189,4 +189,76 @@ router.delete('/', auth, async (req, res) => {
   }
 });
 
+// @route    PUT api/profile/experience
+// @desc     Add profile experience
+// @access   Private
+router.put(
+  '/experience',
+  [
+    auth,
+    [
+      // Verify if title exists in request.
+      check('title', 'Title is required.')
+        .not()
+        .isEmpty(),
+      // Verify if company exists in request.
+      check('company', 'Company is required.')
+        .not()
+        .isEmpty(),
+      // Verify if startDate exists in request.
+      check('startDate', 'Start date is required.')
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    // Finds the validation errors in this request and wraps them in an object with handy functions.
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Destructuring assignment from body of request.
+    const {
+      title,
+      company,
+      location,
+      description,
+      startDate,
+      endDate,
+      current
+    } = req.body;
+
+    // Build newExperience object with data from body of request.
+    const newExperience = {
+      title,
+      company,
+      location,
+      description,
+      startDate,
+      endDate,
+      current
+    };
+
+    try {
+      // Find profile on database using id from user authenticated.
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      // Add object to the beginning of experience array.
+      profile.experience.unshift(newExperience);
+
+      // Save the changes on database.
+      await profile.save();
+
+      // Return the updated profile.
+      return res.json(profile);
+    } catch (error) {
+      // Outputs the error message to the Web Console.
+      console.error(error.message);
+      // Return 500 Internal Server Error response code: Indicates that the server encountered an
+      // unexpected condition that prevented it from fulfilling the request. */
+      return res.status(500).send('Internal Server Error.');
+    }
+  }
+);
+
 module.exports = router;

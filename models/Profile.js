@@ -21,8 +21,8 @@ const ProfileSchema = new mongoose.Schema({
       company: { type: String, required: true },
       location: { type: String },
       description: { type: String },
-      from: { type: Date, required: true },
-      to: { type: Date },
+      startDate: { type: Date, required: true },
+      endDate: { type: Date },
       current: { Boolean, default: false }
     }
   ],
@@ -32,8 +32,8 @@ const ProfileSchema = new mongoose.Schema({
       degree: { type: String, required: true },
       fieldOfStudy: { type: String, required: true },
       description: { type: String },
-      from: { type: Date, required: true },
-      to: { type: Date },
+      startDate: { type: Date, required: true },
+      endDate: { type: Date },
       current: { type: Boolean, default: false }
     }
   ],
