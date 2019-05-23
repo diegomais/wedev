@@ -291,4 +291,81 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
   }
 });
 
+// @route    PUT api/profile/education
+// @desc     Add profile education
+// @access   Private
+router.put(
+  '/education',
+  [
+    auth,
+    [
+      // Verify if school exists in request.
+      check('school', 'School is required.')
+        .not()
+        .isEmpty(),
+      // Verify if degree exists in request.
+      check('degree', 'Degree is required.')
+        .not()
+        .isEmpty(),
+      // Verify if fieldOfStudy exists in request.
+      check('fieldOfStudy', 'Field of study is required.')
+        .not()
+        .isEmpty(),
+      // Verify if startDate exists in request.
+      check('startDate', 'Start date is required.')
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    // Find the validation errors in this request and wraps them in an object with handy functions.
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Destructuring assignment from body of request.
+    const {
+      school,
+      degree,
+      fieldOfStudy,
+      description,
+      startDate,
+      endDate,
+      current
+    } = req.body;
+
+    // Build newEducation object with data from body of request.
+    const newEducation = {
+      school,
+      degree,
+      fieldOfStudy,
+      description,
+      startDate,
+      endDate,
+      current
+    };
+
+    try {
+      // Find profile on database using id from user authenticated.
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      // Add object to the beginning of education array.
+      profile.education.unshift(newEducation);
+
+      // Save the changes on database.
+      await profile.save();
+
+      // Return the updated profile.
+      return res.json(profile);
+    } catch (error) {
+      // Outputs the error message to the Web Console.
+      console.error(error.message);
+      // Return 500 Internal Server Error response code: Indicates that the server encountered an
+      // unexpected condition that prevented it from fulfilling the request. */
+      return res.status(500).send('Internal Server Error.');
+    }
+  }
+);
+
 module.exports = router;
