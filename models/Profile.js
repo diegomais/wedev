@@ -1,7 +1,7 @@
 // Import mongoose module: mongodb object modeling for node.js.
 const mongoose = require('mongoose');
 
-/** Define user schema that defines the shape of the documents within users collection.
+/** Define profile schema that defines the shape of the documents within profiles collection.
  * user: A DBRef (database reference) is an ObjectID referencing an object in users collection.
  * skills: Array of strings.
  * experience: Array of documents.
