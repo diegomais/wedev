@@ -10,6 +10,10 @@ const auth = require('../../middleware/auth');
 // Import express-validator module: middlewares that wraps validator.js functions.
 const { check, validationResult } = require('express-validator/check');
 
+// Import request package: simplest way possible to make http calls.
+// It supports HTTPS and follows redirects by default.
+const request = require('request');
+
 // Load Profile model.
 const Profile = require('../../models/Profile');
 
@@ -389,6 +393,52 @@ router.delete('/education/:edu_id', auth, async (req, res) => {
 
     // Return the updated profile.
     return res.json(profile);
+  } catch (error) {
+    // Outputs the error message to the Web Console.
+    console.error(error.message);
+    // Return 500 Internal Server Error response code: Indicates that the server encountered an
+    // unexpected condition that prevented it from fulfilling the request. */
+    return res.status(500).send('Internal Server Error.');
+  }
+});
+
+// @route    GET api/profile/github/:username
+// @desc     Get user repos from Github
+// @access   Public
+router.get('/github/:username', (req, res) => {
+  try {
+    // Create a constant reference to githubClientId declared on environment variables.
+    const githubClientId = process.env.GITHUB_CLIENT_ID;
+
+    // Create a constant reference to githubClientId declared on environment variables.
+    const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
+
+    // Request a list of repositories owned by the username with 5 results per page
+    // in ascending order of creation. Using GET method and user-agent header required.
+    const options = {
+      uri: `https://api.github.com/users/${
+        req.params.username
+      }/repos?per_page=5&sort=created:asc&client_id=${githubClientId}&client_secret=${githubClientSecret}`,
+      method: 'GET',
+      headers: { 'user-agent': 'node.js' }
+    };
+
+    request(options, (error, response, body) => {
+      // Outputs the error message to the Web Console.
+      if (error) console.error(error);
+
+      // Return message when response status differ of 200 OK success status response code:
+      // Indicates that the request has succeeded.
+      if (response.statusCode !== 200)
+        return res.status(404).json({
+          message: `We couldn’t find any user matching '${
+            req.params.username
+          }'.`
+        });
+
+      // Return the 5 last repos .
+      return res.json(JSON.parse(body));
+    });
   } catch (error) {
     // Outputs the error message to the Web Console.
     console.error(error.message);
