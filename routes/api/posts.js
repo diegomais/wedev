@@ -34,6 +34,34 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// @route    GET api/posts/:id
+// @desc     Get post by ID
+// @access   Private
+router.get('/:id', auth, async (req, res) => {
+  try {
+    // Find post document by id.
+    const post = await Post.findById(req.params.id);
+
+    // Return a message if post doesn't exist.
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found.' });
+    }
+
+    // Return post found.
+    return res.json(post);
+  } catch (error) {
+    // Outputs the error message to the Web Console.
+    console.error(error.message);
+    // Handle cast error on find when objectId is invalid.
+    if (error.kind === 'ObjectId') {
+      return res.status(404).json({ message: 'Post not found.' });
+    }
+    // Return 500 Internal Server Error response code: Indicates that the server encountered an
+    // unexpected condition that prevented it from fulfilling the request. */
+    return res.status(500).send('Internal Server Error.');
+  }
+});
+
 // @route    POST api/posts
 // @desc     Create a post
 // @access   Private
