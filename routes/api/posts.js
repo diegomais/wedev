@@ -16,6 +16,24 @@ const User = require('../../models/User');
 // Load Post model.
 const Post = require('../../models/Post');
 
+// @route    GET api/posts
+// @desc     Get all posts
+// @access   Private
+router.get('/', auth, async (req, res) => {
+  try {
+    // Find all posts and sets the sort order by descending date.
+    const posts = await Post.find().sort({ date: -1 });
+    // Return all posts found.
+    return res.json(posts);
+  } catch (error) {
+    // Outputs the error message to the Web Console.
+    console.error(error.message);
+    // Return 500 Internal Server Error response code: Indicates that the server encountered an
+    // unexpected condition that prevented it from fulfilling the request. */
+    return res.status(500).send('Internal Server Error.');
+  }
+});
+
 // @route    POST api/posts
 // @desc     Create a post
 // @access   Private
