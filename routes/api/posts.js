@@ -39,7 +39,7 @@ router.get('/', auth, async (req, res) => {
 // @access   Private
 router.get('/:id', auth, async (req, res) => {
   try {
-    // Find post document by id.
+    // Find post document by ID.
     const post = await Post.findById(req.params.id);
 
     // Return a message if post doesn't exist.
@@ -110,5 +110,41 @@ router.post(
     }
   }
 );
+
+// @route    DELETE api/posts/:id
+// @desc     Delete a post by ID
+// @access   Private
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    // Find post document by ID.
+    const post = await Post.findById(req.params.id);
+
+    // Return a message if post doesn't exist.
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found.' });
+    }
+
+    // Check if authenticated user is the writer of post
+    if (post.user.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'User not authorized.' });
+    }
+
+    // Remove post on database.
+    await post.remove();
+
+    // Return a successful message.
+    return res.json({ message: 'Post removed.' });
+  } catch (error) {
+    // Outputs the error message to the Web Console.
+    console.error(error.message);
+    // Handle cast error on find when objectId is invalid.
+    if (error.kind === 'ObjectId') {
+      return res.status(404).json({ message: 'Post not found.' });
+    }
+    // Return 500 Internal Server Error response code: Indicates that the server encountered an
+    // unexpected condition that prevented it from fulfilling the request. */
+    return res.status(500).send('Internal Server Error.');
+  }
+});
 
 module.exports = router;
