@@ -211,4 +211,57 @@ router.put('/unlike/:id', auth, async (req, res) => {
   }
 });
 
+// @route    POST api/posts/:id/comment
+// @desc     Add a comment on a post
+// @access   Private
+router.post(
+  '/:id/comment',
+  [
+    auth,
+    [
+      // Validate if text exists in request.
+      check('text', 'Text is required.')
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    // Find the validation errors in request and wraps them in an object with handy functions.
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      // Get authenticated user document on database.
+      const user = await User.findById(req.user.id);
+      // Get post document on database.
+      const post = await Post.findById(req.params.id);
+
+      // Build comment object.
+      const newComment = {
+        text: req.body.text,
+        user: req.user.id,
+        name: user.name,
+        avatar: user.avatar
+      };
+
+      // Add comment object to the beginning of comments array in post document.
+      post.comments.unshift(newComment);
+
+      // Save the changes on post document on database.
+      await post.save();
+
+      // Return comments array.
+      return res.json(post.comments);
+    } catch (error) {
+      // Outputs the error message to the Web Console.
+      console.error(error.message);
+      // Return 500 Internal Server Error response code: Indicates that the server encountered an
+      // unexpected condition that prevented it from fulfilling the request. */
+      return res.status(500).send('Internal Server Error.');
+    }
+  }
+);
+
 module.exports = router;
