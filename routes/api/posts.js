@@ -152,7 +152,7 @@ router.delete('/:id', auth, async (req, res) => {
 // @access   Private
 router.put('/like/:id', auth, async (req, res) => {
   try {
-    // Find post document by ID.
+    // Find post by ID.
     const post = await Post.findById(req.params.id);
 
     // Check if the post has already been liked by the authenticated user.
@@ -161,6 +161,41 @@ router.put('/like/:id', auth, async (req, res) => {
 
     // Adds authenticated user to the beginning of likes array in post document.
     post.likes.unshift({ user: req.user.id });
+
+    // Save the changes on post document on database.
+    await post.save();
+
+    // Return likes array.
+    return res.json(post.likes);
+  } catch (error) {
+    // Outputs the error message to the Web Console.
+    console.error(error.message);
+    // Return 500 Internal Server Error response code: Indicates that the server encountered an
+    // unexpected condition that prevented it from fulfilling the request. */
+    return res.status(500).send('Internal Server Error.');
+  }
+});
+
+// @route    PUT api/posts/unlike/:id
+// @desc     Unlike a post
+// @access   Private
+router.put('/unlike/:id', auth, async (req, res) => {
+  try {
+    // Find post by ID.
+    const post = await Post.findById(req.params.id);
+
+    // Check if the post has already been liked by the authenticated user.
+    if (!post.likes.some(like => like.user.toString() === req.user.id)) {
+      return res.status(400).json({ message: 'Post has not yet been liked.' });
+    }
+
+    // Get index of the authenticated user to remove.
+    const removeIndex = post.likes
+      .map(like => like.user.toString())
+      .indexOf(req.user.id);
+
+    // Remove the index that contains the authenticated user.
+    post.likes.splice(removeIndex, 1);
 
     // Save the changes on post document on database.
     await post.save();
