@@ -264,4 +264,47 @@ router.post(
   }
 );
 
+// @route    DELETE api/posts/:id/comment/:comment_id
+// @desc     Remove a comment from post
+// @access   Private
+router.delete('/:id/comment/:comment_id', auth, async (req, res) => {
+  try {
+    // Get post document on database.
+    const post = await Post.findById(req.params.id);
+
+    // Pull out comment.
+    const comment = post.comments.find(
+      comment => comment.id === req.params.comment_id
+    );
+
+    // Make sure comment exists.
+    if (!comment)
+      return res.status(404).json({ message: 'Comment does not exist.' });
+
+    // Check if comment was writen by the authenticated user.
+    if (comment.user.toString() !== req.user.id)
+      return res.status(401).json({ message: 'User not authorized.' });
+
+    // Get index of comment to remove.
+    const removeIndex = post.comments
+      .map(comment => comment.id)
+      .indexOf(req.params.comment_id);
+
+    // Remove the index that contains the comment.
+    post.comments.splice(removeIndex, 1);
+
+    // Save changes on database.
+    await post.save();
+
+    // Return comments array.
+    return res.json(post.comments);
+  } catch (error) {
+    // Outputs the error message to the Web Console.
+    console.error(error.message);
+    // Return 500 Internal Server Error response code: Indicates that the server encountered an
+    // unexpected condition that prevented it from fulfilling the request. */
+    return res.status(500).send('Internal Server Error.');
+  }
+});
+
 module.exports = router;
