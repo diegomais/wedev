@@ -147,4 +147,33 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+// @route    PUT api/posts/like/:id
+// @desc     Like a post
+// @access   Private
+router.put('/like/:id', auth, async (req, res) => {
+  try {
+    // Find post document by ID.
+    const post = await Post.findById(req.params.id);
+
+    // Check if the post has already been liked by the authenticated user.
+    if (post.likes.some(like => like.user.toString() === req.user.id))
+      return res.status(400).json({ message: 'Post already liked.' });
+
+    // Adds authenticated user to the beginning of likes array in post document.
+    post.likes.unshift({ user: req.user.id });
+
+    // Save the changes on post document on database.
+    await post.save();
+
+    // Return likes array.
+    return res.json(post.likes);
+  } catch (error) {
+    // Outputs the error message to the Web Console.
+    console.error(error.message);
+    // Return 500 Internal Server Error response code: Indicates that the server encountered an
+    // unexpected condition that prevented it from fulfilling the request. */
+    return res.status(500).send('Internal Server Error.');
+  }
+});
+
 module.exports = router;
