@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "server": "nodemon server"
+    "server": "nodemon server",
+    "client": "yarn --cwd client start",
+    "dev": "concurrently \"yarn run server\" \"yarn run client\""
   },
   "repository": "https://github.com/diegomais/wedev.git",
   "author": "Diego Mais",
@@ -21,6 +23,7 @@
     "request": "^2.88.0"
   },
   "devDependencies": {
+    "concurrently": "^4.1.0",
     "nodemon": "^1.19.0"
   }
 }
