@@ -9,6 +9,7 @@ const USER_LOADED = 'wedev/auth/USER_LOADED';
 const AUTH_ERROR = 'wedev/auth/AUTH_ERROR';
 const LOGIN_SUCCESS = 'wedev/auth/LOGIN_SUCCESS';
 const LOGIN_FAIL = 'wedev/auth/LOGIN_FAIL';
+const LOGOUT = 'wedev/auth/LOGOUT';
 
 // Reducer
 export const TOKEN_KEY = '@wedev-Token';
@@ -31,6 +32,7 @@ export default function reducer(state = initialState, action = {}) {
     case REGISTER_FAIL:
     case AUTH_ERROR:
     case LOGIN_FAIL:
+    case LOGOUT:
       localStorage.removeItem(TOKEN_KEY);
       return { ...state, token: null, isAuthenticated: false, loading: false };
     case USER_LOADED:
@@ -129,3 +131,6 @@ export const loginUser = ({ email, password }) => async dispatch => {
     dispatch({ type: LOGIN_FAIL });
   }
 };
+
+// Logout / Clear Profile
+export const logoutUser = () => dispatch => dispatch({ type: LOGOUT });
