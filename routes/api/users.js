@@ -19,7 +19,7 @@ const bcrypt = require('bcryptjs');
 // Import jsonwebtoken module: implementation of JSON Web Tokens.
 const jwt = require('jsonwebtoken');
 
-// @route    POST api/user
+// @route    POST api/users
 // @desc     Register user
 // @access   Public
 router.post(
