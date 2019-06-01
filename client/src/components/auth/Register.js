@@ -2,9 +2,10 @@ import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setAlert } from '../../redux/ducks/alert';
+import { registerUser } from '../../redux/ducks/auth';
 import { Link } from 'react-router-dom';
 
-const Register = ({ setAlert }) => {
+const Register = ({ setAlert, registerUser }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,7 +23,7 @@ const Register = ({ setAlert }) => {
     if (password !== password2) {
       setAlert({ alertType: 'danger', message: 'Passwords do not match' });
     } else {
-      console.log('SUCCESS');
+      registerUser({ name, email, password });
     }
   };
 
@@ -61,7 +62,6 @@ const Register = ({ setAlert }) => {
             placeholder='Password'
             name='password'
             value={password}
-            minlength='6'
             onChange={e => onChange(e)}
           />
         </div>
@@ -86,10 +86,11 @@ const Register = ({ setAlert }) => {
 };
 
 Register.propTypes = {
-  setAlert: PropTypes.func.isRequired
+  setAlert: PropTypes.func.isRequired,
+  registerUser: PropTypes.func.isRequired
 };
 
 export default connect(
   null,
-  { setAlert }
+  { setAlert, registerUser }
 )(Register);
