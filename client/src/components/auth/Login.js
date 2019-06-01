@@ -1,18 +1,24 @@
 import React, { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { loginUser } from '../../redux/ducks/auth';
 
-const Login = ({ loginUser }) => {
+const Login = ({ loginUser, isAuthenticated }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
+
   const { email, password } = formData;
+
   const onChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
   const onSubmit = async e => {
     e.preventDefault();
     loginUser({ email, password });
   };
+
+  if (isAuthenticated) return <Redirect to='/dashboard' />;
+
   return (
     <Fragment>
       <h1 className='large text-primary'>Login</h1>
@@ -50,10 +56,15 @@ const Login = ({ loginUser }) => {
 };
 
 Login.propTypes = {
-  loginUser: PropTypes.func.isRequired
+  loginUser: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool
 };
 
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
 export default connect(
-  null,
+  mapStateToProps,
   { loginUser }
 )(Login);
