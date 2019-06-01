@@ -58,7 +58,7 @@ router.post(
       if (!user) {
         return res
           .status(401)
-          .json({ errors: [{ message: 'Invalid credentials.' }] });
+          .json({ errors: [{ msg: 'Invalid credentials.' }] });
       }
 
       // Asynchronously tests password against hash password.
@@ -66,7 +66,7 @@ router.post(
       if (!isMatch) {
         return res
           .status(401)
-          .json({ errors: [{ message: 'Invalid credentials.' }] });
+          .json({ errors: [{ msg: 'Invalid credentials.' }] });
       }
 
       // Create payload to token with user id.
