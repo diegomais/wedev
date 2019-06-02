@@ -3,6 +3,7 @@ import axios from 'axios';
 // Action Types
 const GET_PROFILE = 'wedev/profile/GET_PROFILE';
 const PROFILE_ERROR = 'wedev/profile/PROFILE_ERROR';
+export const CLEAR_PROFILE = 'wedev/profile/CLEAR_PROFILE';
 
 // Reducer
 const initialState = {
@@ -20,6 +21,14 @@ export default function reducer(state = initialState, action = {}) {
       return { ...state, profile: payload.profile, loading: false };
     case PROFILE_ERROR:
       return { ...state, error: payload.error, loading: false };
+    case CLEAR_PROFILE:
+      return {
+        ...state,
+        profile: null,
+        profiles: [],
+        repos: [],
+        loading: false
+      };
     default:
       return state;
   }
