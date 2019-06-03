@@ -69,6 +69,13 @@ export const createProfile = (
 
     dispatch({ type: GET_PROFILE, payload: { profile: res.data } });
 
+    dispatch(
+      setAlert({
+        alertType: 'success',
+        message: edit ? 'Profile Updated' : 'Profile Created'
+      })
+    );
+
     if (!edit) history.push('/dashboard');
   } catch (error) {
     const errors = error.response.data.errors;
