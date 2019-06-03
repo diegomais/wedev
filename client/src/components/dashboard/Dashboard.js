@@ -23,7 +23,7 @@ const Dashboard = ({
         <i className='fas fa-user' /> Welcome {user && user.name}
       </p>
       {profile !== null ? (
-        <Fragment>has</Fragment>
+        <Fragment>{JSON.stringify(profile)}</Fragment>
       ) : (
         <Fragment>
           <p>You don't have a profile yet, let's create your profile now?</p>

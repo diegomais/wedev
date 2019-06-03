@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { setAlert } from './alert';
 
 // Action Types
 const GET_PROFILE = 'wedev/profile/GET_PROFILE';
@@ -43,6 +44,46 @@ export const getCurrentProfile = () => async dispatch => {
 
     dispatch({ type: GET_PROFILE, payload: { profile: res.data } });
   } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: {
+        error: {
+          message: error.response.statusText,
+          status: error.response.status
+        }
+      }
+    });
+  }
+};
+
+// Create or update profile
+export const createProfile = (
+  formData,
+  history,
+  edit = false
+) => async dispatch => {
+  try {
+    const config = { headers: { 'Content-Type': 'application/json' } };
+
+    const res = await axios.post('/api/profile', formData, config);
+
+    dispatch({ type: GET_PROFILE, payload: { profile: res.data } });
+
+    if (!edit) history.push('/dashboard');
+  } catch (error) {
+    const errors = error.response.data.errors;
+
+    if (errors)
+      errors.forEach(error =>
+        dispatch(
+          setAlert({
+            alertType: 'danger',
+            message: error.msg,
+            timeout: 20000
+          })
+        )
+      );
+
     dispatch({
       type: PROFILE_ERROR,
       payload: {
