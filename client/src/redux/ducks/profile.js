@@ -3,6 +3,7 @@ import { setAlert } from './alert';
 
 // Action Types
 const GET_PROFILE = 'wedev/profile/GET_PROFILE';
+const UPDATE_PROFILE = 'wedev/profile/UPDATE_PROFILE';
 const PROFILE_ERROR = 'wedev/profile/PROFILE_ERROR';
 export const CLEAR_PROFILE = 'wedev/profile/CLEAR_PROFILE';
 
@@ -19,6 +20,7 @@ export default function reducer(state = initialState, action = {}) {
 
   switch (type) {
     case GET_PROFILE:
+    case UPDATE_PROFILE:
       return { ...state, profile: payload.profile, loading: false };
     case PROFILE_ERROR:
       return { ...state, error: payload.error, loading: false };
@@ -77,6 +79,44 @@ export const createProfile = (
     );
 
     if (!edit) history.push('/dashboard');
+  } catch (error) {
+    const errors = error.response.data.errors;
+
+    if (errors)
+      errors.forEach(error =>
+        dispatch(
+          setAlert({
+            alertType: 'danger',
+            message: error.msg,
+            timeout: 20000
+          })
+        )
+      );
+
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: {
+        error: {
+          message: error.response.statusText,
+          status: error.response.status
+        }
+      }
+    });
+  }
+};
+
+// Add Experience
+export const addExperience = (formData, history) => async dispatch => {
+  try {
+    const config = { headers: { 'Content-Type': 'application/json' } };
+
+    const res = await axios.put('/api/profile/experience', formData, config);
+
+    dispatch({ type: UPDATE_PROFILE, payload: { profile: res.data } });
+
+    dispatch(setAlert({ alertType: 'success', message: 'Experience added' }));
+
+    history.push('/dashboard');
   } catch (error) {
     const errors = error.response.data.errors;
 
