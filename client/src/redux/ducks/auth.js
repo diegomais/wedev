@@ -11,6 +11,7 @@ const AUTH_ERROR = 'wedev/auth/AUTH_ERROR';
 const LOGIN_SUCCESS = 'wedev/auth/LOGIN_SUCCESS';
 const LOGIN_FAIL = 'wedev/auth/LOGIN_FAIL';
 const LOGOUT = 'wedev/auth/LOGOUT';
+export const ACCOUNT_DELETED = 'wedev/auth/ACCOUNT_DELETED';
 
 // Reducer
 export const TOKEN_KEY = '@wedev-Token';
@@ -34,6 +35,7 @@ export default function reducer(state = initialState, action = {}) {
     case AUTH_ERROR:
     case LOGIN_FAIL:
     case LOGOUT:
+    case ACCOUNT_DELETED:
       localStorage.removeItem(TOKEN_KEY);
       return { ...state, token: null, isAuthenticated: false, loading: false };
     case USER_LOADED:

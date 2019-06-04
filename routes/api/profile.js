@@ -17,6 +17,12 @@ const request = require('request');
 // Load Profile model.
 const Profile = require('../../models/Profile');
 
+// Load Post model.
+const Post = require('../../models/Post');
+
+// Load User model.
+const User = require('../../models/User');
+
 // @route    GET api/profile/me
 // @desc     Get current user profile
 // @access   Private
@@ -178,7 +184,8 @@ router.get('/:user_id', async (req, res) => {
 // @access   Private
 router.delete('/', auth, async (req, res) => {
   try {
-    // TODO: Remove users posts.
+    // Remove users posts.
+    await Post.deleteMany({ user: req.user.id });
 
     // Remove profile.
     await Profile.findOneAndRemove({ user: req.user.id });

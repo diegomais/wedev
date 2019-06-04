@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { setAlert } from './alert';
+import { ACCOUNT_DELETED } from './auth';
 
 // Action Types
 const GET_PROFILE = 'wedev/profile/GET_PROFILE';
@@ -220,5 +221,31 @@ export const deleteEducation = id => async dispatch => {
         }
       }
     });
+  }
+};
+
+// Delete account and profile
+export const deleteAccount = () => async dispatch => {
+  if (window.confirm('Are you sure? This can NOT be undone!')) {
+    try {
+      await axios.delete('/api/profile');
+
+      dispatch({ type: CLEAR_PROFILE });
+      dispatch({ type: ACCOUNT_DELETED });
+
+      dispatch(
+        setAlert({ message: 'Your account has been permanently deleted' })
+      );
+    } catch (error) {
+      dispatch({
+        type: PROFILE_ERROR,
+        payload: {
+          error: {
+            message: error.response.statusText,
+            status: error.response.status
+          }
+        }
+      });
+    }
   }
 };
