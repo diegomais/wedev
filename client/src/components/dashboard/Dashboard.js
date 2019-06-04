@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getCurrentProfile } from '../../redux/ducks/profile';
 import Spinner from '../layout/Spinner';
+import Experience from './Experience';
+import Education from './Education';
 
 const Dashboard = ({
   getCurrentProfile,
@@ -36,7 +38,8 @@ const Dashboard = ({
               <i className='fas fa-graduation-cap text-primary' /> Add Education
             </Link>
           </div>
-          {JSON.stringify(profile)}
+          <Experience experience={profile.experience} />
+          <Education education={profile.education} />
         </Fragment>
       ) : (
         <Fragment>
