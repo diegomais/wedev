@@ -3,6 +3,7 @@ import { setAlert } from './alert';
 import { ACCOUNT_DELETED } from './auth';
 
 // Action Types
+const GET_PROFILES = 'wedev/profile/GET_PROFILES';
 const GET_PROFILE = 'wedev/profile/GET_PROFILE';
 const UPDATE_PROFILE = 'wedev/profile/UPDATE_PROFILE';
 const PROFILE_ERROR = 'wedev/profile/PROFILE_ERROR';
@@ -20,6 +21,8 @@ export default function reducer(state = initialState, action = {}) {
   const { type, payload } = action;
 
   switch (type) {
+    case GET_PROFILES:
+      return { ...state, profiles: payload.profiles, loading: false };
     case GET_PROFILE:
     case UPDATE_PROFILE:
       return { ...state, profile: payload.profile, loading: false };
@@ -39,6 +42,30 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 // Action Creators
+
+// Get all profiles
+export const getAllProfiles = () => async dispatch => {
+  // Clean profile in app state to prevent flashing of past users profile.
+  dispatch({ type: CLEAR_PROFILE });
+
+  try {
+    // Make a request for all profiles.
+    const res = await axios.get('/api/profile');
+
+    // Update the app state with the results of the API call.
+    dispatch({ type: GET_PROFILES, payload: { profiles: res.data } });
+  } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: {
+        error: {
+          message: error.response.statusText,
+          status: error.response.status
+        }
+      }
+    });
+  }
+};
 
 // Get current users profile
 export const getCurrentProfile = () => async dispatch => {
