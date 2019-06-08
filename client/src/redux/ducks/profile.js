@@ -5,6 +5,7 @@ import { ACCOUNT_DELETED } from './auth';
 // Action Types
 const GET_PROFILES = 'wedev/profile/GET_PROFILES';
 const GET_PROFILE = 'wedev/profile/GET_PROFILE';
+const GET_GITHUB_REPOSITORIES = 'wedev/profile/GET_GITHUB_REPOSITORIES';
 const UPDATE_PROFILE = 'wedev/profile/UPDATE_PROFILE';
 const PROFILE_ERROR = 'wedev/profile/PROFILE_ERROR';
 export const CLEAR_PROFILE = 'wedev/profile/CLEAR_PROFILE';
@@ -13,7 +14,7 @@ export const CLEAR_PROFILE = 'wedev/profile/CLEAR_PROFILE';
 const initialState = {
   profile: null,
   profiles: [],
-  repos: [],
+  githubRepositories: [],
   loading: true,
   error: {}
 };
@@ -36,6 +37,12 @@ export default function reducer(state = initialState, action = {}) {
         repos: [],
         loading: false
       };
+    case GET_GITHUB_REPOSITORIES:
+      return {
+        ...state,
+        githubRepositories: payload.githubRepositories,
+        loading: false
+      };
     default:
       return state;
   }
@@ -54,6 +61,51 @@ export const getAllProfiles = () => async dispatch => {
 
     // Update the app state with the results of the API call.
     dispatch({ type: GET_PROFILES, payload: { profiles: res.data } });
+  } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: {
+        error: {
+          message: error.response.statusText,
+          status: error.response.status
+        }
+      }
+    });
+  }
+};
+
+// Get profile by ID
+export const getProfileById = userId => async dispatch => {
+  try {
+    // Make a request for profile by ID.
+    const res = await axios.get(`/api/profile/${userId}`);
+
+    // Update the app state with the result of the API call.
+    dispatch({ type: GET_PROFILE, payload: { profile: res.data } });
+  } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: {
+        error: {
+          message: error.response.statusText,
+          status: error.response.status
+        }
+      }
+    });
+  }
+};
+
+// Get GitHub repositories
+export const getGitHubRepositories = username => async dispatch => {
+  try {
+    // Make a request for GitHub repositories.
+    const res = await axios.get(`/api/profile/github/${username}`);
+
+    // Update the app state with the result of the API call.
+    dispatch({
+      type: GET_GITHUB_REPOSITORIES,
+      payload: { githubRepositories: res.data }
+    });
   } catch (error) {
     dispatch({
       type: PROFILE_ERROR,
