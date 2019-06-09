@@ -6,6 +6,7 @@ import Alert from './components/layout/Alert';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import PrivateRoute from './components/routing/PrivateRoute';
+import Posts from './components/posts/Posts';
 import Dashboard from './components/dashboard/Dashboard';
 import CreateProfile from './components/profile-forms/CreateProfile';
 import EditProfile from './components/profile-forms/EditProfile';
@@ -41,6 +42,7 @@ const App = () => {
               <Route exact path='/login' component={Login} />
               <Route exact path='/developers' component={Profiles} />
               <Route exact path='/profile/:id' component={Profile} />
+              <PrivateRoute exact path='/posts' component={Posts} />
               <PrivateRoute exact path='/dashboard' component={Dashboard} />
               <PrivateRoute
                 exact
