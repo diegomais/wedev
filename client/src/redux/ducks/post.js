@@ -1,7 +1,9 @@
 import axios from 'axios';
+import { setAlert } from './alert';
 
 // Action Types
 const GET_POSTS = 'wedev/post/GET_POSTS';
+const DELETE_POST = 'wedev/post/DELETE_POST';
 const UPDATE_LIKES = 'wedev/post/UPDATE_LIKES';
 const POST_ERROR = 'wedev/post/POST_ERROR';
 
@@ -14,6 +16,12 @@ export default function reducer(state = initialState, action = {}) {
   switch (type) {
     case GET_POSTS:
       return { ...state, posts: payload, loading: false };
+    case DELETE_POST:
+      return {
+        ...state,
+        posts: state.posts.filter(post => post._id !== payload),
+        loading: false
+      };
     case POST_ERROR:
       return { ...state, error: payload, loading: false };
     case UPDATE_LIKES:
@@ -37,6 +45,27 @@ export const getPosts = () => async dispatch => {
     const res = await axios.get('/api/posts');
 
     dispatch({ type: GET_POSTS, payload: res.data });
+  } catch (error) {
+    dispatch({
+      type: POST_ERROR,
+      payload: {
+        error: {
+          message: error.response.statusText,
+          status: error.response.status
+        }
+      }
+    });
+  }
+};
+
+// Delete post
+export const deletePost = postId => async dispatch => {
+  try {
+    await axios.delete(`/api/posts/${postId}`);
+
+    dispatch({ type: DELETE_POST, payload: postId });
+
+    dispatch(setAlert({ alertType: 'success', message: 'Post Removed' }));
   } catch (error) {
     dispatch({
       type: POST_ERROR,
