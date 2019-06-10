@@ -3,6 +3,7 @@ import { setAlert } from './alert';
 
 // Action Types
 const GET_POSTS = 'wedev/post/GET_POSTS';
+const ADD_POST = 'wedev/post/ADD_POST';
 const DELETE_POST = 'wedev/post/DELETE_POST';
 const UPDATE_LIKES = 'wedev/post/UPDATE_LIKES';
 const POST_ERROR = 'wedev/post/POST_ERROR';
@@ -16,6 +17,9 @@ export default function reducer(state = initialState, action = {}) {
   switch (type) {
     case GET_POSTS:
       return { ...state, posts: payload, loading: false };
+    case ADD_POST:
+      // Put payload before because the new post is loaded before old posts.
+      return { ...state, posts: [payload, ...state.posts], loading: false };
     case DELETE_POST:
       return {
         ...state,
@@ -45,6 +49,29 @@ export const getPosts = () => async dispatch => {
     const res = await axios.get('/api/posts');
 
     dispatch({ type: GET_POSTS, payload: res.data });
+  } catch (error) {
+    dispatch({
+      type: POST_ERROR,
+      payload: {
+        error: {
+          message: error.response.statusText,
+          status: error.response.status
+        }
+      }
+    });
+  }
+};
+
+// Add post
+export const addPost = formData => async dispatch => {
+  const config = { headers: { 'Content-Type': 'application/json' } };
+
+  try {
+    const res = await axios.post('/api/posts', formData, config);
+
+    dispatch({ type: ADD_POST, payload: res.data });
+
+    dispatch(setAlert({ alertType: 'success', message: 'Post Created' }));
   } catch (error) {
     dispatch({
       type: POST_ERROR,
