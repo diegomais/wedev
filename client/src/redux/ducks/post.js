@@ -8,6 +8,7 @@ const ADD_POST = 'wedev/post/ADD_POST';
 const DELETE_POST = 'wedev/post/DELETE_POST';
 const UPDATE_LIKES = 'wedev/post/UPDATE_LIKES';
 const ADD_COMMENT = 'wedev/post/ADD_COMMENT';
+const DELETE_COMMENT = 'wedev/post/DELETE_COMMENT';
 const POST_ERROR = 'wedev/post/POST_ERROR';
 
 // Reducer
@@ -44,6 +45,17 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         post: { ...state.post, comments: payload },
+        loading: false
+      };
+    case DELETE_COMMENT:
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          comments: state.post.comments.filter(
+            comment => comment._id !== payload
+          )
+        },
         loading: false
       };
     default:
@@ -187,6 +199,27 @@ export const addComment = (postId, formData) => async dispatch => {
     dispatch({ type: ADD_COMMENT, payload: res.data });
 
     dispatch(setAlert({ alertType: 'success', message: 'Comment Added' }));
+  } catch (error) {
+    dispatch({
+      type: POST_ERROR,
+      payload: {
+        error: {
+          message: error.response.statusText,
+          status: error.response.status
+        }
+      }
+    });
+  }
+};
+
+// Delete comment
+export const deleteComment = (postId, commentId) => async dispatch => {
+  try {
+    await axios.delete(`/api/posts/${postId}/comment/${commentId}`);
+
+    dispatch({ type: DELETE_COMMENT, payload: commentId });
+
+    dispatch(setAlert({ alertType: 'success', message: 'Comment Removed' }));
   } catch (error) {
     dispatch({
       type: POST_ERROR,
