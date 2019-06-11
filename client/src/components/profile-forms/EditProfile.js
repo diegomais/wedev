@@ -92,8 +92,8 @@ const EditProfile = ({
     <Fragment>
       <h1 className='large text-primary'>Create Your Profile</h1>
       <p className='lead'>
-        <i className='fas fas-user' />
-        Let's get some information to make your profile stand out
+        <i className='fas fa-user-circle' /> Let's get some information to make
+        your profile stand out
       </p>
       <small>* = required fields</small>
       <form className='form' onSubmit={e => onSubmit(e)}>
@@ -191,7 +191,9 @@ const EditProfile = ({
           >
             Add Social Network Links
           </button>
-          <span>Optional</span>
+          <small className='form-text'>
+            <span>Optional</span>
+          </small>
         </div>
         {displaySocialInputs && (
           <Fragment>
