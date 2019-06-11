@@ -25,18 +25,27 @@ To download the project follow the instructions bellow:
 2. cd wedev
 ```
 
+* Set environment variables in .env file
+
+```
+DB_URI: uri of your mongodb connection for example: "mongodb://localhost/dev-social"
+JWT_SECRET: secret key, to compute the signature of JSON Web Tokens
+GITHUB_CLIENT_ID: GitHub app's Client ID
+GITHUB_CLIENT_SECRET GitHub app's Client Secret
+```
+
 * Install the dependencies and start the server
 
 ```
-3. yarn install
-4. yarn start
+1. yarn install
+2. yarn run dev
 ```
 
 or
 
 ```
 3. npm install
-4. npm run start
+4. npm run dev
 ```
 
 ## Author
