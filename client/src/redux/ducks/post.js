@@ -7,6 +7,7 @@ const GET_POST = 'wedev/post/GET_POST';
 const ADD_POST = 'wedev/post/ADD_POST';
 const DELETE_POST = 'wedev/post/DELETE_POST';
 const UPDATE_LIKES = 'wedev/post/UPDATE_LIKES';
+const ADD_COMMENT = 'wedev/post/ADD_COMMENT';
 const POST_ERROR = 'wedev/post/POST_ERROR';
 
 // Reducer
@@ -37,6 +38,12 @@ export default function reducer(state = initialState, action = {}) {
         posts: state.posts.map(post =>
           post._id === payload.id ? { ...post, likes: payload.likes } : post
         ),
+        loading: false
+      };
+    case ADD_COMMENT:
+      return {
+        ...state,
+        post: { ...state.post, comments: payload },
         loading: false
       };
     default:
@@ -153,6 +160,33 @@ export const removeLike = postId => async dispatch => {
     const res = await axios.put(`/api/posts/unlike/${postId}`);
 
     dispatch({ type: UPDATE_LIKES, payload: { id: postId, likes: res.data } });
+  } catch (error) {
+    dispatch({
+      type: POST_ERROR,
+      payload: {
+        error: {
+          message: error.response.statusText,
+          status: error.response.status
+        }
+      }
+    });
+  }
+};
+
+// Add comment
+export const addComment = (postId, formData) => async dispatch => {
+  const config = { headers: { 'Content-Type': 'application/json' } };
+
+  try {
+    const res = await axios.post(
+      `/api/posts/${postId}/comment`,
+      formData,
+      config
+    );
+
+    dispatch({ type: ADD_COMMENT, payload: res.data });
+
+    dispatch(setAlert({ alertType: 'success', message: 'Comment Added' }));
   } catch (error) {
     dispatch({
       type: POST_ERROR,
