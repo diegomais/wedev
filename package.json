@@ -4,7 +4,7 @@
   "description": "Social network for developers",
   "main": "server.js",
   "scripts": {
-    "start": "node server",
+    "start": "pm2-runtime start ecosystem.config.js --env production",
     "server": "nodemon server",
     "client": "yarn --cwd client start",
     "dev": "concurrently \"yarn run server\" \"yarn run client\"",
@@ -22,6 +22,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.5.7",
     "path": "^0.12.7",
+    "pm2": "^3.5.1",
     "request": "^2.88.0"
   },
   "devDependencies": {
