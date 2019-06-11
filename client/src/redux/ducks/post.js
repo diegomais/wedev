@@ -3,6 +3,7 @@ import { setAlert } from './alert';
 
 // Action Types
 const GET_POSTS = 'wedev/post/GET_POSTS';
+const GET_POST = 'wedev/post/GET_POST';
 const ADD_POST = 'wedev/post/ADD_POST';
 const DELETE_POST = 'wedev/post/DELETE_POST';
 const UPDATE_LIKES = 'wedev/post/UPDATE_LIKES';
@@ -17,6 +18,8 @@ export default function reducer(state = initialState, action = {}) {
   switch (type) {
     case GET_POSTS:
       return { ...state, posts: payload, loading: false };
+    case GET_POST:
+      return { ...state, post: payload, loading: false };
     case ADD_POST:
       // Put payload before because the new post is loaded before old posts.
       return { ...state, posts: [payload, ...state.posts], loading: false };
@@ -49,6 +52,25 @@ export const getPosts = () => async dispatch => {
     const res = await axios.get('/api/posts');
 
     dispatch({ type: GET_POSTS, payload: res.data });
+  } catch (error) {
+    dispatch({
+      type: POST_ERROR,
+      payload: {
+        error: {
+          message: error.response.statusText,
+          status: error.response.status
+        }
+      }
+    });
+  }
+};
+
+// Get post
+export const getPost = postId => async dispatch => {
+  try {
+    const res = await axios.get(`/api/posts/${postId}`);
+
+    dispatch({ type: GET_POST, payload: res.data });
   } catch (error) {
     dispatch({
       type: POST_ERROR,
