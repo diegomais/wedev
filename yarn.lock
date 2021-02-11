@@ -88,6 +88,13 @@
     eventemitter2 "^4.1.0"
     ws "^3.0.0"
 
+"@pm2/pm2-version-check@latest":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@pm2/pm2-version-check/-/pm2-version-check-1.0.3.tgz#4ec5abaeee45c98dce3640f13861058c29f312c5"
+  integrity sha512-SBuYsh+o35knItbRW97vl5/5nEc5c5DYP7PxjyPLOfmm9bMaDsVeATXjXMBy6+KLlyrYWHZxGbfXe003NnHClg==
+  dependencies:
+    debug "^4.1.1"
+
 "@types/bson@*":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@types/bson/-/bson-4.0.3.tgz#30889d2ffde6262abbe38659364c631454999fbf"
@@ -2786,14 +2793,15 @@ pm2-multimeter@^0.1.2:
   dependencies:
     charm "~0.1.1"
 
-pm2@^3.5.1:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/pm2/-/pm2-3.5.1.tgz#62be62c2c3ba5f394575479712cc3e2dea6d01c7"
-  integrity sha512-pDPBetbI48JDynxmtSPNSKRDk/LRbhsHrJ/WSCKVD1TUNnb6XNMe6GzO7DCNijJBvdaQ+u1WxNudxqExlXdhEw==
+pm2@^3.5.2:
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/pm2/-/pm2-3.5.2.tgz#3463970ed954812dc9e14bd340b0f905903f83a9"
+  integrity sha512-tawoeDijLKiNuC+hgK4tRroZ8QSdU15bTTfZJyNL3WS+XO68CIjWWS0MXnqTkHgop9AjBEifgq3ubXYeUyemdg==
   dependencies:
     "@pm2/agent" "^0.5.22"
     "@pm2/io" "^4.1.2"
     "@pm2/js-api" "^0.5.43"
+    "@pm2/pm2-version-check" latest
     async "^2.6.1"
     blessed "^0.1.81"
     chalk "^2.4.1"
